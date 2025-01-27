@@ -9,7 +9,7 @@ body{
     padding: 20px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     flex-wrap: wrap;
 }
 .modal-window{
@@ -59,4 +59,26 @@ body{
     width: 100%;
     display: flex;
     justify-content: space-between;
+}
+.choose-inner{
+    max-width: 120px;
+    cursor: pointer;
+}
+.choose-inner img{
+    width: 100%;
+    height: auto;
+}
+.choose-inner p{
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+}
+.choose-inner:not(:last-child){
+    margin-bottom: 20px;
+}
+.choose-game{
+    width: 30%;
+}
+.canvas{
+    min-width: 500px;
 }
