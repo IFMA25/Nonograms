@@ -531,9 +531,9 @@ class Play{
 // create element on page
 
 const container = new Element('div', 'container', '', body).createElement();
-const header = new Element('div', 'header', '', container).createElement();
+const header = new Element('header', 'header', '', container).createElement();
 const topElement = new Element('div', 'top-element', '', header).createElement();
-const menu = new Element('header', 'menu', '', header).createElement();
+const menu = new Element('div', 'menu', '', header).createElement();
 const navigation = new Element('nav', 'nav', '', header).createElement();
 const themeBox = new Element('div', 'theme-box', '', topElement).createElement();
 const themeLight = new Element('button','btn-theme theme-light', '', themeBox).createElement();
@@ -913,3 +913,6 @@ function activateButton() {
         continueGame.disabled = true;
     }
 }
+winTitle.addEventListener('click', function(){
+    innerWin.classList.toggle('show');
+})
