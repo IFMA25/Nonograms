@@ -255,7 +255,6 @@ class Element{
 class Play{
     constructor(){
         this.fieldGame = this.createPlayField();
-        console.log(this.fieldGame)
     }
     createPlayField(){
         const field = [];
@@ -387,7 +386,6 @@ class Play{
             ctx.fillText(text, 90 - textWidth, 90 + fontSize +size/2 + i*size);
             arrTextWidth.push(textWidth);
         }
-        
         for(let i=0; i < cluesX.length; i++){
             if(i%5-4 == 0){
                 ctx.lineWidth = 4;
@@ -406,11 +404,9 @@ class Play{
             ctx.stroke();
         }
 
-
         let arrTextColumn = [];
         for(let i = 0; i < shablon[0].length; i++){
             let cluesColumn = [];
-            // console.log(cluesColumn)
             let count = 0;
             for(let j = 0; j < row; j++){
                 if(shablon[j][i] == 1){
@@ -464,12 +460,11 @@ class Play{
     }
     drawMark(rowIndex, columnIndex, ctx){
         ctx.lineWidth = 1;
-        // if(document.body.classList.contains('dark')){
-        //     ctx.strokeStyle = 'white';
-        // }else{
-        //     ctx.strokeStyle = 'black';
-        // }
-        ctx.strokeStyle = 'black';
+        if(document.body.classList.contains('dark')){
+            ctx.strokeStyle = 'white';
+        }else{
+            ctx.strokeStyle = 'black';
+        }
         ctx.beginPath();
         ctx.moveTo( 100 + rowIndex * size, 100 + columnIndex * size);
         ctx.lineTo(100 + (rowIndex + 1) * size, 100 + (columnIndex + 1) * size);
@@ -552,8 +547,6 @@ const innerWin = new Element('div', 'inner-win', '', innerBlock).createElement()
 const winTitle = new Element('h2', 'win-title', 'Winning table', innerWin).createElement();
 const winTable = new Element('div', 'win-table', '', innerWin).createElement();
 const innerCanvas = new Element('div', 'inner-canvas', '', innerBlock).createElement();
-
-
 const btnReset = new Element('button', 'btn-reset', 'Reset game', menu).createElement();
 const btnRandomGame = new Element('button', 'btn-random', 'Random game', menu).createElement();
 const saveGame = new Element('button', 'btn-save', 'Save game', menu).createElement();
@@ -579,8 +572,6 @@ if(document.body.classList.contains('dark')){
 ctx.fillRect(100, 100, canvas.width-200, canvas.height-100);
 
 let nonogram = new Play(size);
-
-
 
 
 function createLevelBtn (levelName, text, shablon){
@@ -623,10 +614,9 @@ function chooseShabloneGame(){
         nameGame = Object.keys(shablonChoose)[i];
         secundCount = 0;
         minutCount = 0;
-        // console.log('shablon '+ shablon)
+        console.table('shablon '+ shablon)
         // console.log('fieldGame ' +nonogram.fieldGame.value);
         winMsg = {nameGame: nameGame.toUpperCase(), time:'', level: level};
-        console.log('choose' + winMsg)
         body.classList.remove('choose');
     })
 }
@@ -745,7 +735,6 @@ continueGame.addEventListener('click', function(){
     secundCount = saveGameStoradge[0].time.secund;
     timerStart();
     init();
-    console.log('Восстановлено:', nonogram.fieldGame);
 })
 
 function audioOnOff(sound){
@@ -836,12 +825,10 @@ function chahgeTimer(time, timeBox){
     timeBox.textContent = time < 10 ? '0' + time : time;
 }
 function addWinGameStoradge(){
-    // if(winMsg.solution == true)return;
     const gameStoradge = JSON.parse(localStorage.getItem('Win_Game')) || [];
     if(gameStoradge.length > 4){
         gameStoradge.shift();
     }
-    
     gameStoradge.push(winMsg);
     winMsg = {};
     localStorage.setItem('Win_Game', JSON.stringify(gameStoradge));
@@ -851,7 +838,6 @@ function addWinGameStoradge(){
 function showWinGame(){
     const gameWin = JSON.parse(localStorage.getItem('Win_Game')) || [];
     gameWin.sort((a,b) => a.time - b.time);
-    // console.log(gameWin)
     winTable.innerHTML = '';
     gameWin.forEach(win => {
         let minuts = '';
@@ -874,7 +860,6 @@ function invertColor(){
         document.querySelectorAll('*').forEach(element => {
             const color = window.getComputedStyle(element).color;
             const borderColor = window.getComputedStyle(element).border.split(' ').slice(2).join(' ');
-            console.log(borderColor)
             if (color === 'rgb(0, 0, 0)' || color === 'black') {
                 element.style.color = 'white';
             }
