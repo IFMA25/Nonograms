@@ -270,7 +270,6 @@ class Play{
         }
         return field
     }
-    
     renderField(ctx){
         ctx.strokeStyle = 'black';
         for(let i = 1; i <= row-1; i++){
@@ -564,12 +563,7 @@ const btnSolution = new Element('button', 'solution', 'Solution', innerCanvas).c
 let ctx = canvas.getContext('2d', { willReadFrequently: true });
 canvas.width = widthCanvas;
 canvas.height = heightCanvas;
-if(document.body.classList.contains('dark')){
-    ctx.fillStyle = 'black';
-}else{
-    ctx.fillStyle = 'white';
-}
-ctx.fillRect(100, 100, canvas.width-200, canvas.height-100);
+inverColorField();
 
 let nonogram = new Play(size);
 
@@ -608,13 +602,14 @@ function chooseShabloneGame(){
     innerChoose.addEventListener('click', function(){
         canvas.style.pointerEvents = 'auto';
         ctx.clearRect(0, 0, widthCanvas, heightCanvas);
+        inverColorField();
         shablon = shablonChoose[Object.keys(shablonChoose)[i]];
         nonogram.fieldGame = nonogram.createPlayField();
         init();
         nameGame = Object.keys(shablonChoose)[i];
         secundCount = 0;
         minutCount = 0;
-        console.table('shablon '+ shablon)
+        console.table(shablon)
         // console.log('fieldGame ' +nonogram.fieldGame.value);
         winMsg = {nameGame: nameGame.toUpperCase(), time:'', level: level};
         body.classList.remove('choose');
@@ -666,6 +661,7 @@ btnReset.addEventListener('click', function(){
     canvas.style.pointerEvents = 'auto';
     nonogram.fieldGame = nonogram.createPlayField();
     ctx.clearRect(0, 0, widthCanvas, heightCanvas);
+    inverColorField();
     secundCount = 0;
     minutCount = 0;
     init();
@@ -686,18 +682,24 @@ btnRandomGame.addEventListener('click', function(){
     fontSize = sizeCanvas.fontSize[level];
     canvas.width = sizeCanvas.widthCanvas[level];
     canvas.height = sizeCanvas.heightCanvas[level];
+    inverColorField();
     nonogram.fieldGame = nonogram.createPlayField();
     init();
+    secundCount = 0;
+    minutCount = 0;
 });
 
 btnSolution.addEventListener('click', function(){
+    
     canvas.style.pointerEvents = 'none';
     nonogram.fieldGame = nonogram.createPlayField();
     ctx.clearRect(0, 0, widthCanvas, heightCanvas);
+    inverColorField();
     nonogram.showSolution(ctx);
     nonogram.fieldGame = nonogram.createPlayField();
     init();
 });
+
 
 saveGame.addEventListener('click', function(){
     let saveGameStoradge = JSON.parse(localStorage.getItem('Save_Game')) || [];
@@ -716,14 +718,21 @@ continueGame.addEventListener('click', function(){
     canvas.style.pointerEvents = 'auto';
     let saveGameStoradge = JSON.parse(localStorage.getItem('Save_Game')) || [];
     shablon = saveGameStoradge[0].saveShablon;
-
+    
     ctx.clearRect(0, 0, widthCanvas, heightCanvas);
+    inverColorField();
     nonogram.fieldGame = nonogram.createPlayField();
+    
 
     for(let i=0; i <nonogram.fieldGame.length; i++){
         for(let j = 0; j < nonogram.fieldGame[0].length; j++){
             nonogram.fieldGame[i][j] = { ...saveGameStoradge[0].saveField[i][j] };
-            nonogram.fieldGame[i][j].value === 1 ? ctx.fillStyle = 'black' : ctx.fillStyle = 'white'
+            if(document.body.classList.contains('dark')){
+                nonogram.fieldGame[i][j].value === 1 ? ctx.fillStyle = 'white' : ctx.fillStyle = 'black';
+            }else{
+                nonogram.fieldGame[i][j].value === 1 ? ctx.fillStyle = 'black' : ctx.fillStyle = 'white';
+            }
+            
             nonogram.drawCell(j, i, ctx);
 
             if (nonogram.fieldGame[i][j].mark) {
@@ -853,7 +862,14 @@ function showWinGame(){
 document.addEventListener('DOMContentLoaded', showWinGame);
 init();
 
-
+function inverColorField(){
+    if(document.body.classList.contains('dark')){
+        ctx.fillStyle = 'black';
+    }else{
+        ctx.fillStyle = 'white';
+    }
+    ctx.fillRect(100, 100, canvas.width-200, canvas.height-100);
+}
 
 function invertColor(){
     if(document.body.classList.contains('dark')){

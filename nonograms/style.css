@@ -20,6 +20,12 @@ body.dark button{
     background-color: rgb(165, 165, 165);
     border: 1px solid #e0e0e0;
 }
+body.dark .inner-win{
+    background-color: transparent;
+}
+body.choose .inner-win{
+    display: none;
+}
 button{
     outline: none;
     border: 1px solid rgb(128, 128, 128);
@@ -396,10 +402,5 @@ body.dark .timer{
     .timer{
         margin-left: auto;
         margin-right: 0;
-    }
-}
-@media (max-width:520px){
-    .canvas{
-        margin-left: -20px;
     }
 }
