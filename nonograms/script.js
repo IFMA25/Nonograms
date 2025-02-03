@@ -3,30 +3,30 @@ const sizeCanvas = {
     fontSize:{
         easy: 22,
         medium: 20,
-        hard: 18
+        hard: 13
     },
     widthCanvas:{
         easy: 500,
-        medium: 550,
-        hard: 600
+        medium: 500,
+        hard: 500
     },
     heightCanvas:{
-        easy: 500,
-        medium: 550,
-        hard: 600
+        easy: 400,
+        medium: 400,
+        hard: 400
     }
 }
 
 let level = 'easy';
 let fontSize = 22; 
 let widthCanvas = 500; 
-let heightCanvas = 500;
+let heightCanvas = 400;
 let shablon = [
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0],
+    [0, 0, 1, 0, 0],
+    [0, 0, 1, 0, 0],
+    [1, 1, 1, 1, 1],
+    [0, 0, 1, 0, 0],
+    [0, 0, 1, 0, 0]
 ];
 
 let shablonEasy = {
@@ -215,7 +215,7 @@ let shablonHard = {
         [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1]
     ],
 }
-let shablonBeforeSolution = [];
+
 let shablonChoose ;
 let row;
 let column
@@ -226,7 +226,12 @@ let secundCount = 0;
 let minutCount = 0;
 let size;
 let winMsg = {};
-let solution = false;
+let saveShablon;
+let saveField;
+let soundList = [];
+let imgCanvasLight = null;
+const storageGame = localStorage.setItem;
+
 
 
 class Element{
@@ -271,8 +276,18 @@ class Play{
         ctx.strokeStyle = 'black';
         for(let i = 1; i <= row-1; i++){
             if(i % 5 ===0){
+                if(document.body.classList.contains('dark')){
+                    ctx.strokeStyle = '#f2f2f2';
+                }else{
+                    ctx.strokeStyle = 'black';
+                }
                 ctx.lineWidth = 5;
             } else{
+                if(document.body.classList.contains('dark')){
+                    ctx.strokeStyle = '#f2f2f2';
+                }else{
+                    ctx.strokeStyle = 'black';
+                }
                 ctx.lineWidth = 1;
             }
             ctx.beginPath();
@@ -283,8 +298,18 @@ class Play{
         }
         for(let j = 1; j <= column-1; j++){
             if(j % 5 ===0){
+                if(document.body.classList.contains('dark')){
+                    ctx.strokeStyle = '#f2f2f2';
+                }else{
+                    ctx.strokeStyle = 'black';
+                }
                 ctx.lineWidth = 5;
             } else{
+                if(document.body.classList.contains('dark')){
+                    ctx.strokeStyle = '#f2f2f2';
+                }else{
+                    ctx.strokeStyle = 'black';
+                }
                 ctx.lineWidth = 1;
             }
             ctx.beginPath();
@@ -298,6 +323,11 @@ class Play{
         for(let i = 0; i <= row; i++){
             if(i == 0 || i == row){
                 ctx.lineWidth = 5;
+                if(document.body.classList.contains('dark')){
+                    ctx.strokeStyle = '#f2f2f2';
+                }else{
+                    ctx.strokeStyle = 'black';
+                }
                 ctx.beginPath();
                 ctx.moveTo(97, i*size+98.5);
                 ctx.lineTo(column * size + 100, i*size + 98.5);
@@ -308,6 +338,11 @@ class Play{
         for(let j = 0; j <= column; j++){
             if(j == 0 || j == column){
                 ctx.lineWidth = 5;
+                if(document.body.classList.contains('dark')){
+                    ctx.strokeStyle = '#f3f3f3';
+                }else{
+                    ctx.strokeStyle = 'black';
+                }
                 ctx.beginPath();
                 ctx.moveTo(j*size + 98.5, 98.5);
                 ctx.lineTo(j*size + 98.5, row*size + 98.5);
@@ -318,7 +353,11 @@ class Play{
     }
     renderClues(ctx){
         ctx.font = `${fontSize}px Roboto`;
-        ctx.fillStyle = 'black';
+        if(document.body.classList.contains('dark')){
+            ctx.fillStyle = 'white';
+        } else{
+            ctx.fillStyle = 'black';
+        }
         let text = '';
         let cluesX = [];
         let cluesY = [];
@@ -345,15 +384,24 @@ class Play{
         for(let i=0; i < cluesX.length; i++){
             text = cluesX[i].join('  ');
             let textWidth = ctx.measureText(text).width;
-            ctx.fillText(text, 90 - textWidth, 88 + fontSize +size/2 + i*size);
+            ctx.fillText(text, 90 - textWidth, 90 + fontSize +size/2 + i*size);
             arrTextWidth.push(textWidth);
         }
         
         for(let i=0; i < cluesX.length; i++){
-            ctx.lineWidth = 1;
+            if(i%5-4 == 0){
+                ctx.lineWidth = 4;
+            }else{
+                ctx.lineWidth = 1;
+            }
             ctx.beginPath();
-            ctx.moveTo( 90 - Math.max(...arrTextWidth), 100 + (i+1) * size);
-            ctx.lineTo(100, 100 + (i+1) * size);
+            if(i%5-4 == 0){
+                ctx.moveTo( 90 - Math.max(...arrTextWidth), 99 + (i+1) * size);
+                ctx.lineTo(100, 99 + (i+1) * size);
+            }else{
+                ctx.moveTo( 90 - Math.max(...arrTextWidth), 100 + (i+1) * size);
+                ctx.lineTo(100, 100 + (i+1) * size);
+            }
             ctx.closePath();
             ctx.stroke();
         }
@@ -389,10 +437,19 @@ class Play{
             }
         }
         for(let i=0; i < cluesY.length; i++){
-            ctx.lineWidth = 1;
+            if(i%5 -4 ==0){
+                ctx.lineWidth = 4;
+            } else{
+                ctx.lineWidth = 1;
+            }
             ctx.beginPath();
-            ctx.moveTo( 100 + i*size + size, 100);
-            ctx.lineTo(100 + i*size+size, 98-Math.max(...arrTextColumn)*fontSize);
+            if(i%5 -4 ==0){
+                ctx.moveTo( 99 + i*size + size, 100);
+                ctx.lineTo(99 + i*size+size, 98-Math.max(...arrTextColumn)*fontSize);
+            } else{
+                ctx.moveTo( 100 + i*size + size, 100);
+                ctx.lineTo(100 + i*size+size, 98-Math.max(...arrTextColumn)*fontSize);
+            }
             ctx.closePath();
             ctx.stroke();
         }
@@ -400,14 +457,42 @@ class Play{
     positionCell(event){
         let rowIndex = Math.floor((event.offsetX - 100)/size);
         let columnIndex =Math.floor((event.offsetY - 100)/size);
-        // console.log(`x: ${rowIndex}, y: ${columnIndex}`);
         return {rowIndex, columnIndex}
+    }
+    drawCell(rowIndex, columnIndex, ctx){
+        ctx.fillRect((100 + rowIndex*size+1), (100 + columnIndex*size+1), size-2, size-2);
+    }
+    drawMark(rowIndex, columnIndex, ctx){
+        ctx.lineWidth = 1;
+        // if(document.body.classList.contains('dark')){
+        //     ctx.strokeStyle = 'white';
+        // }else{
+        //     ctx.strokeStyle = 'black';
+        // }
+        ctx.strokeStyle = 'black';
+        ctx.beginPath();
+        ctx.moveTo( 100 + rowIndex * size, 100 + columnIndex * size);
+        ctx.lineTo(100 + (rowIndex + 1) * size, 100 + (columnIndex + 1) * size);
+        ctx.moveTo(100 + (rowIndex + 1) * size, 100 + columnIndex * size);
+        ctx.lineTo(100 + rowIndex * size, 100 + (columnIndex + 1) * size);
+        ctx.closePath();
+        ctx.stroke();
     }
     colorCell(rowIndex, columnIndex, ctx){
         if(rowIndex >=0 && rowIndex < row && columnIndex >=0 && columnIndex < column){
             this.fieldGame[columnIndex][rowIndex].value = this.fieldGame[columnIndex][rowIndex].value === 0 ? 1 : 0;
-            ctx.fillStyle = this.fieldGame[columnIndex][rowIndex].value ? 'black' : 'white';
-            ctx.fillRect((100 + rowIndex*size+1), (100 + columnIndex*size+1), size-2, size-2);
+            if(document.body.classList.contains('dark')){
+                ctx.fillStyle = this.fieldGame[columnIndex][rowIndex].value ? 'white' : 'black';
+            } else{
+                ctx.fillStyle = this.fieldGame[columnIndex][rowIndex].value ? 'black' : 'white';
+            }
+            if(this.fieldGame[columnIndex][rowIndex].mark){
+                // ctx.fillStyle = 'white';
+                // this.fieldGame[columnIndex][rowIndex].mark = false;
+                // this.fieldGame[columnIndex][rowIndex].value = 0;
+                this.fieldGame[columnIndex][rowIndex].style.pointerEvents = 'none';
+            }
+            this.drawCell(rowIndex, columnIndex, ctx);
             this.updateBoard(ctx);
         }
         return this.fieldGame;
@@ -415,19 +500,15 @@ class Play{
     markCell(rowIndex, columnIndex, ctx){
         if(rowIndex >=0 && rowIndex < row && columnIndex >=0 && columnIndex < column){
             if(this.fieldGame[columnIndex][rowIndex].mark){
-                ctx.fillStyle = 'white';
+                if(document.body.classList.contains('dark')){
+                    ctx.fillStyle = 'black';
+                }else{
+                    ctx.fillStyle = 'white';
+                }
                 ctx.fillRect((100 + rowIndex*size+1), (100 + columnIndex*size+1), size-2, size-2);
                 this.fieldGame[columnIndex][rowIndex].mark = false;
             }else if(this.fieldGame[columnIndex][rowIndex].value === 0 && this.fieldGame[columnIndex][rowIndex].mark == false){
-                ctx.lineWidth = 1;
-                ctx.strokeStyle = 'black';
-                ctx.beginPath();
-                ctx.moveTo( 100 + rowIndex * size, 100 + columnIndex * size);
-                ctx.lineTo(100 + (rowIndex + 1) * size, 100 + (columnIndex + 1) * size);
-                ctx.moveTo(100 + (rowIndex + 1) * size, 100 + columnIndex * size);
-                ctx.lineTo(100 + rowIndex * size, 100 + (columnIndex + 1) * size);
-                ctx.closePath();
-                ctx.stroke();
+                this.drawMark(rowIndex, columnIndex, ctx);
                 this.fieldGame[columnIndex][rowIndex].mark = true;
                 this.updateBoard(ctx);
             }
@@ -439,7 +520,7 @@ class Play{
         for (let i = 0; i < row; i++) {
             for (let j = 0; j < column; j++) {
                 if (shablon[i][j] === 1) {
-                    this.colorCell(j, i, ctx); // Передаём (rowIndex, columnIndex)
+                    this.colorCell(j, i, ctx);
                 }
             }
         }
@@ -448,34 +529,64 @@ class Play{
 
 
 // create element on page
+
 const container = new Element('div', 'container', '', body).createElement();
-const header = new Element('header', 'header', '', container).createElement();
-const chooseGame = new Element('div', 'choose-game', '', container).createElement();
-const winTable = new Element('div', 'win-table', '', container).createElement();
-const timer = new Element('p', 'timer', '', header).createElement();
+const header = new Element('div', 'header', '', container).createElement();
+const topElement = new Element('div', 'top-element', '', header).createElement();
+const menu = new Element('header', 'menu', '', header).createElement();
+const navigation = new Element('nav', 'nav', '', header).createElement();
+const themeBox = new Element('div', 'theme-box', '', topElement).createElement();
+const themeLight = new Element('button','btn-theme theme-light', '', themeBox).createElement();
+const themeDark = new Element('button', 'btn-theme theme-dark', '', themeBox).createElement();
+const soundBox = new Element('label', 'sound-box', '', topElement).createElement();
+const soundInput = new Element('input', 'btn-sound', '', soundBox).createElement();
+soundInput.setAttribute('type', 'checkbox');
+const soundIcon = new Element('span', 'sound-icon', '', soundBox).createElement();
+const timer = new Element('div', 'timer', '', container).createElement();
 const timerMinuts = new Element('span', 'minuts', 'XX', timer).createElement();
 const timerSlash = new Element('span', '', ':', timer).createElement();
 const timerSecunds = new Element('span', 'secunds', 'XX', timer).createElement();
-const btnReset = new Element('button', 'btn-reset', 'Reset game', header).createElement();
-const btnRandomGame = new Element('button', 'btn-random', 'Random game', header).createElement();
-const btnSolution = new Element('button', 'solution', 'Solution', container).createElement();
+const chooseGame = new Element('div', 'choose-game', '', container).createElement();
+const innerBlock = new Element('div', 'inner', '', container).createElement();
+const innerWin = new Element('div', 'inner-win', '', innerBlock).createElement();
+const winTitle = new Element('h2', 'win-title', 'Winning table', innerWin).createElement();
+const winTable = new Element('div', 'win-table', '', innerWin).createElement();
+const innerCanvas = new Element('div', 'inner-canvas', '', innerBlock).createElement();
 
 
-const canvas = new Element('canvas', 'canvas', '', container).createElement();
+const btnReset = new Element('button', 'btn-reset', 'Reset game', menu).createElement();
+const btnRandomGame = new Element('button', 'btn-random', 'Random game', menu).createElement();
+const saveGame = new Element('button', 'btn-save', 'Save game', menu).createElement();
+const continueGame = new Element('button', 'btn-continue', 'Continue last game', menu).createElement();
+continueGame.disabled = true;
+const audioModal = new Audio('sounds/sound-modal.mp3');
+const audioColor = new Audio('sounds/sound-color.mp3');
+const audioMark = new Audio('sounds/sound-mark.mp3');
+soundList.push(audioModal, audioColor, audioMark);
 
-let ctx = canvas.getContext('2d');
+
+const canvas = new Element('canvas', 'canvas', '', innerCanvas).createElement();
+const btnSolution = new Element('button', 'solution', 'Solution', innerCanvas).createElement();
+
+let ctx = canvas.getContext('2d', { willReadFrequently: true });
 canvas.width = widthCanvas;
 canvas.height = heightCanvas;
+if(document.body.classList.contains('dark')){
+    ctx.fillStyle = 'black';
+}else{
+    ctx.fillStyle = 'white';
+}
+ctx.fillRect(100, 100, canvas.width-200, canvas.height-100);
 
 let nonogram = new Play(size);
 
 
-const navigation = new Element('nav', 'nav', '', header).createElement();
+
 
 function createLevelBtn (levelName, text, shablon){
     const btnLevel = new Element('button', `btn-${levelName}`, text, navigation).createElement();
     btnLevel.addEventListener('click', function(){
-        document.querySelector('.choose-game').style.display = 'block';
+        body.classList.add('choose');
         level = levelName;
         fontSize = sizeCanvas.fontSize[level];
         canvas.width = sizeCanvas.widthCanvas[level];
@@ -504,6 +615,7 @@ function chooseShabloneGame(){
 
     //choose shablon
     innerChoose.addEventListener('click', function(){
+        canvas.style.pointerEvents = 'auto';
         ctx.clearRect(0, 0, widthCanvas, heightCanvas);
         shablon = shablonChoose[Object.keys(shablonChoose)[i]];
         nonogram.fieldGame = nonogram.createPlayField();
@@ -513,10 +625,9 @@ function chooseShabloneGame(){
         minutCount = 0;
         // console.log('shablon '+ shablon)
         // console.log('fieldGame ' +nonogram.fieldGame.value);
-        winMsg = {nameGame: nameGame.toUpperCase(), time:'', level: level, solution:false};
+        winMsg = {nameGame: nameGame.toUpperCase(), time:'', level: level};
         console.log('choose' + winMsg)
-        btnSolution.style.display = 'block';
-
+        body.classList.remove('choose');
     })
 }
 }
@@ -535,37 +646,19 @@ canvas.addEventListener('mousedown', function(event){
         event.offsetY <= shablon.length *size + 100
 
     ){
-        if(solution) {
-            ctx.clearRect(0, 0, widthCanvas, heightCanvas);
-            init();
-            console.log(shablonBeforeSolution)
-            nonogram.fieldGame = shablonBeforeSolution;
-            solution = false;
-            console.log(nonogram.fieldGame)
-
-            nonogram.fieldGame.forEach((row, i) => {
-                row.forEach((cell, j) => {
-                    if (cell.value === 1) {
-                        nonogram.colorCell(i, j, ctx); // Черная ячейка
-                    }
-                });
-            });
-        } else {
-            timerStart();
-        }
+        timerStart();
     }
     const { rowIndex, columnIndex } = nonogram.positionCell(event);
     if(event.button === 0){
         color = !color;
         nonogram.colorCell(rowIndex, columnIndex, ctx);
-        new Audio('sounds/sound-color.mp3').play();
+        audioOnOff(audioColor);
         endTheGame();
     }
     if(event.button === 2){
         nonogram.markCell(rowIndex, columnIndex, ctx);
-        new Audio('sounds/sound-mark.mp3').play();
+        audioOnOff(audioMark);
     }
-    
 });
 canvas.addEventListener('contextmenu', function(event){
     if(
@@ -580,12 +673,16 @@ canvas.addEventListener('contextmenu', function(event){
 });
 
 btnReset.addEventListener('click', function(){
+    canvas.style.pointerEvents = 'auto';
     nonogram.fieldGame = nonogram.createPlayField();
-    console.log(nonogram.fieldGame)
     ctx.clearRect(0, 0, widthCanvas, heightCanvas);
+    secundCount = 0;
+    minutCount = 0;
     init();
 });
+
 btnRandomGame.addEventListener('click', function(){
+    canvas.style.pointerEvents = 'auto';
     const allShablon = [Object.values(shablonEasy), Object.values(shablonMedium), Object.values(shablonHard)].flat();
     const indexRandom = Math.floor((Math.random()*allShablon.length));
     if(indexRandom<=4){
@@ -600,27 +697,80 @@ btnRandomGame.addEventListener('click', function(){
     canvas.width = sizeCanvas.widthCanvas[level];
     canvas.height = sizeCanvas.heightCanvas[level];
     nonogram.fieldGame = nonogram.createPlayField();
-    console.log(nonogram.fieldGame)
     init();
 });
+
 btnSolution.addEventListener('click', function(){
-    shablonBeforeSolution = nonogram.fieldGame;
+    canvas.style.pointerEvents = 'none';
     nonogram.fieldGame = nonogram.createPlayField();
-    console.log(nonogram.fieldGame)
     ctx.clearRect(0, 0, widthCanvas, heightCanvas);
     nonogram.showSolution(ctx);
     nonogram.fieldGame = nonogram.createPlayField();
-    solution = true;
-    winMsg.solution = true;
     init();
-    console.log(shablonBeforeSolution)
+});
+
+saveGame.addEventListener('click', function(){
+    let saveGameStoradge = JSON.parse(localStorage.getItem('Save_Game')) || [];
+    let saveGame = {
+        saveField: JSON.parse(JSON.stringify(nonogram.fieldGame)),
+        saveShablon: JSON.parse(JSON.stringify(shablon)),
+        time: stopTimer()
+    }
+    saveGameStoradge = [];
+    saveGameStoradge.push(saveGame);
+    localStorage.setItem('Save_Game', JSON.stringify(saveGameStoradge));
+    continueGame.disabled = false;
 })
 
-// function restoreMarkedCells() {
-//     nonogram.fieldGame = shablonBeforeSolution;
-    
-// }
-// end game if all cell == shablon
+continueGame.addEventListener('click', function(){
+    canvas.style.pointerEvents = 'auto';
+    let saveGameStoradge = JSON.parse(localStorage.getItem('Save_Game')) || [];
+    shablon = saveGameStoradge[0].saveShablon;
+
+    ctx.clearRect(0, 0, widthCanvas, heightCanvas);
+    nonogram.fieldGame = nonogram.createPlayField();
+
+    for(let i=0; i <nonogram.fieldGame.length; i++){
+        for(let j = 0; j < nonogram.fieldGame[0].length; j++){
+            nonogram.fieldGame[i][j] = { ...saveGameStoradge[0].saveField[i][j] };
+            nonogram.fieldGame[i][j].value === 1 ? ctx.fillStyle = 'black' : ctx.fillStyle = 'white'
+            nonogram.drawCell(j, i, ctx);
+
+            if (nonogram.fieldGame[i][j].mark) {
+                nonogram.drawMark(j, i, ctx)
+            }
+        }
+    }
+    minutCount = saveGameStoradge[0].time.minut;
+    secundCount = saveGameStoradge[0].time.secund;
+    timerStart();
+    init();
+    console.log('Восстановлено:', nonogram.fieldGame);
+})
+
+function audioOnOff(sound){
+    if (soundInput.checked) {
+        sound.pause();
+        sound.muted = true;
+    } else {
+        sound.muted = false;
+        sound.play();
+    }
+}
+soundInput.addEventListener('input', function() {
+    soundList.forEach(sound => {
+        sound.muted = soundInput.checked;
+    });
+});
+
+themeDark.addEventListener('click', function(){
+    body.classList.add('dark');
+    invertColor();
+})
+themeLight.addEventListener('click', function(){
+    body.classList.remove('dark');
+    invertColor();
+})
 function endTheGame(){
     let result = nonogram.fieldGame.every((row, rowIndex) => row.every((col, columnIndex) => col.value === shablon[rowIndex][columnIndex]));
     modalActive(result);
@@ -629,24 +779,23 @@ function endTheGame(){
 //modal window
 function modalActive(result){
     if(result){
-            winMsg.time = stopTimer();
-            const modalWindow = new Element('div', 'modal-window', '', body).createElement();
-            const modalContent = new Element('div', 'modal-content', `Great! You have solved the nonogram in ${winMsg.time} seconds!`, modalWindow).createElement();
-            const modalClose = new Element('button', 'modal-close', '', modalContent).createElement();
-            const modalCloseItem = new Element('i', 'fa-solid fa-xmark', '', modalClose).createElement();
-            console.log(winMsg)
-            // winGame.push(winMsg);
-            addWinGameStoradge();
-            new Audio('sounds/sound-modal.mp3').play();
+        let time = stopTimer()
+        winMsg.time = time.secund + time.minut;
+        const modalWindow = new Element('div', 'modal-window', '', body).createElement();
+        const modalContent = new Element('div', 'modal-content', `Great! You have solved the nonogram in ${winMsg.time} seconds!`, modalWindow).createElement();
+        const modalClose = new Element('button', 'modal-close', '', modalContent).createElement();
+        const modalCloseItem = new Element('i', 'fa-solid fa-xmark', '', modalClose).createElement();
+        addWinGameStoradge();
+        audioOnOff(audioModal);
 
-            modalClose.addEventListener('click', function(){
-            modalWindow.remove();
-            });
-            modalWindow.addEventListener('click', function(e){
-                if(!modalContent.contains(e.target)){
-                    modalWindow.remove();
-                }
-            })
+        modalClose.addEventListener('click', function(){
+        modalWindow.remove();
+        });
+        modalWindow.addEventListener('click', function(e){
+            if(!modalContent.contains(e.target)){
+                modalWindow.remove();
+            }
+        })
         }
 }
 
@@ -673,17 +822,21 @@ function timerStart(){
     }
 }
 function stopTimer(){
+    let time = {
+        minut: minutCount,
+        secund: secundCount
+    }
     if(timerStatus){
         clearInterval(startSecund);
         timerStatus = false;
     }
-    return secundCount + minutCount*60
+    return time;
 }
 function chahgeTimer(time, timeBox){
     timeBox.textContent = time < 10 ? '0' + time : time;
 }
 function addWinGameStoradge(){
-    if(winMsg.solution == true)return;
+    // if(winMsg.solution == true)return;
     const gameStoradge = JSON.parse(localStorage.getItem('Win_Game')) || [];
     if(gameStoradge.length > 4){
         gameStoradge.shift();
@@ -713,3 +866,50 @@ function showWinGame(){
 }
 document.addEventListener('DOMContentLoaded', showWinGame);
 init();
+
+
+
+function invertColor(){
+    if(document.body.classList.contains('dark')){
+        document.querySelectorAll('*').forEach(element => {
+            const color = window.getComputedStyle(element).color;
+            const borderColor = window.getComputedStyle(element).border.split(' ').slice(2).join(' ');
+            console.log(borderColor)
+            if (color === 'rgb(0, 0, 0)' || color === 'black') {
+                element.style.color = 'white';
+            }
+            if(borderColor === 'rgb(128, 128, 128)'){
+                element.style.border = '1px solid #e0e0e0';
+            }
+        });
+
+        imgCanvasLight = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const imgCanvas = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        for(let i=0; i < imgCanvas.data.length; i+=4){
+            imgCanvas.data[i] = 255 - imgCanvas.data[i];
+            imgCanvas.data[i+1] = 255 - imgCanvas.data[i+1];
+            imgCanvas.data[i+2] = 255 - imgCanvas.data[i+2];
+        }
+        ctx.putImageData(imgCanvas, 0, 0)
+    } else {
+        document.querySelectorAll('*').forEach(element => {
+            element.style.color = '';
+            element.style.border = '';
+        });
+        if(imgCanvasLight){
+            ctx.putImageData(imgCanvasLight, 0, 0);
+        }
+    }
+}
+
+window.addEventListener('load', function() {
+    activateButton();
+});
+function activateButton() {
+    let saveGameStorage = JSON.parse(localStorage.getItem('Save_Game')) || [];
+    if (Array.isArray(saveGameStorage) && saveGameStorage.length > 0) {
+        continueGame.disabled = false;
+    } else {
+        continueGame.disabled = true;
+    }
+}
