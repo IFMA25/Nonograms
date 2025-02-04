@@ -225,7 +225,8 @@ let startSecund;
 let secundCount = 0;
 let minutCount = 0;
 let size;
-let winMsg = {};
+console.log(shablonEasy)
+let winMsg = {nameGame: 'PLUS', time:'', level: 'easy'};;
 let saveShablon;
 let saveField;
 let soundList = [];
