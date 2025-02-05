@@ -486,7 +486,6 @@ class Play{
             }
             this.drawCell(rowIndex, columnIndex, ctx);
             this.updateBoard(ctx);
-            console.log(this.fieldGame[columnIndex][rowIndex])
         }
         return this.fieldGame;
     }
@@ -513,7 +512,6 @@ class Play{
                 this.drawCell(rowIndex, columnIndex, ctx);
                 this.fieldGame[columnIndex][rowIndex].mark = false;
             }
-            // console.log(this.fieldGame[columnIndex][rowIndex])
             this.updateBoard(ctx);
         }
         return this.fieldGame;
@@ -630,7 +628,6 @@ function init(){
 }
 
 canvas.addEventListener('mousedown', function(event){
-    console.log(winMsg.level)
     if(
         event.offsetX >= 100 &&
         event.offsetX <= 100 + shablon[0].length * size &&
@@ -670,7 +667,6 @@ btnReset.addEventListener('click', function(){
     inverColorField();
     stopTimer();
     init();
-    console.log(winMsg.level)
 });
 
 btnRandomGame.addEventListener('click', function(){
@@ -707,7 +703,6 @@ btnSolution.addEventListener('click', function(){
 
 
 saveGame.addEventListener('click', function(){
-    // let saveGameStoradge = localStorage.getItem('Save_Game') || {};
     let saveGame = {
         saveField: JSON.parse(JSON.stringify(nonogram.fieldGame)),
         saveShablon: JSON.parse(JSON.stringify(shablon)),
@@ -715,9 +710,6 @@ saveGame.addEventListener('click', function(){
         level: winMsg.level,
         nameGame: winMsg.nameGame
     }
-    console.log(saveGame)
-    // saveGameStoradge = {};
-    // saveGameStoradge = (saveGame);
     localStorage.setItem('Save_Game', JSON.stringify(saveGame));
     continueGame.disabled = false;
 })
@@ -726,7 +718,6 @@ continueGame.addEventListener('click', function(){
     canvas.style.pointerEvents = 'auto';
     let saveGameStoradge = JSON.parse(localStorage.getItem('Save_Game'));
     shablon = saveGameStoradge.saveShablon;
-    console.log(saveGameStoradge)
     ctx.clearRect(0, 0, widthCanvas, heightCanvas);
     inverColorField();
     nonogram.fieldGame = nonogram.createPlayField();
@@ -854,7 +845,6 @@ function addWinGameStoradge(){
         gameStoradge.shift();
     }
     gameStoradge.push(winMsg);
-    console.log(winMsg)
     winMsg = {};
     localStorage.setItem('Win_Game', JSON.stringify(gameStoradge));
     showWinGame();

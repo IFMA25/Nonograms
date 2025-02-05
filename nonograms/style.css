@@ -404,3 +404,8 @@ body.dark .timer{
         margin-right: 0;
     }
 }
+@media (max-width:550px){
+    .canvas{
+        margin-left: -20px;
+    }
+}
