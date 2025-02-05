@@ -422,7 +422,6 @@ class Play{
                 cluesColumn.push(0);
             }
             cluesY.push(cluesColumn);
-            console.log(cluesY)
             arrTextColumn.push(cluesColumn.length)
         }
         for(let i=0; i < cluesY.length; i++){
