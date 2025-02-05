@@ -706,7 +706,10 @@ saveGame.addEventListener('click', function(){
     let saveGame = {
         saveField: JSON.parse(JSON.stringify(nonogram.fieldGame)),
         saveShablon: JSON.parse(JSON.stringify(shablon)),
-        time: stopTimer(),
+        time: {
+            minut: minutCount,
+            secund: secundCount
+        },
         level: winMsg.level,
         nameGame: winMsg.nameGame
     }
@@ -722,7 +725,7 @@ continueGame.addEventListener('click', function(){
     inverColorField();
     nonogram.fieldGame = nonogram.createPlayField();
     winMsg.level = saveGameStoradge.level;
-    winMsg.nameGame = saveGameStoradge.nameGame.toUpperCase();
+    winMsg.nameGame = saveGameStoradge.nameGame;
 
 
     for(let i=0; i <nonogram.fieldGame.length; i++){
@@ -786,7 +789,6 @@ function modalActive(result){
         const modalCloseItem = new Element('i', 'fa-solid fa-xmark', '', modalClose).createElement();
         addWinGameStoradge();
         audioOnOff(audioModal);
-        stopTimer();
         canvas.style.pointerEvents = 'none';
         modalClose.addEventListener('click', function(){
         modalWindow.remove();
