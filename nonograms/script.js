@@ -230,8 +230,9 @@ let winMsg = {nameGame: 'PLUS', time:'', level: 'easy'};;
 let saveShablon;
 let saveField;
 let soundList = [];
-let imgCanvasLight = null;
+let imgCanvas = null;
 const storageGame = localStorage.setItem;
+let colorInverted = false;
 
 
 
@@ -487,7 +488,7 @@ class Play{
             }
             this.drawCell(rowIndex, columnIndex, ctx);
             this.updateBoard(ctx);
-            // console.log(this.fieldGame[columnIndex][rowIndex])
+            console.log(this.fieldGame[columnIndex][rowIndex])
         }
         return this.fieldGame;
     }
@@ -775,11 +776,11 @@ soundInput.addEventListener('input', function() {
 
 themeDark.addEventListener('click', function(){
     body.classList.add('dark');
-    invertColor();
+    invertColor()
 })
 themeLight.addEventListener('click', function(){
     body.classList.remove('dark');
-    invertColor();
+    invertColor()
 })
 function endTheGame(){
     let result = nonogram.fieldGame.every((row, rowIndex) => row.every((col, columnIndex) => col.value === shablon[rowIndex][columnIndex]));
@@ -895,24 +896,29 @@ function invertColor(){
                 element.style.border = '1px solid #e0e0e0';
             }
         });
-
-        imgCanvasLight = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const imgCanvas = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        if (!colorInverted) {
+            inverColorCanvas();
+            colorInverted = true;
+        }
+    } else {
+        document.querySelectorAll('*').forEach(element => {
+            element.style.color = '';
+            element.style.border = '';
+        });
+        if (colorInverted) {
+            inverColorCanvas();
+            colorInverted = false;
+        }
+    }
+}
+function inverColorCanvas(){
+    imgCanvas = ctx.getImageData(0, 0, canvas.width, canvas.height);
         for(let i=0; i < imgCanvas.data.length; i+=4){
             imgCanvas.data[i] = 255 - imgCanvas.data[i];
             imgCanvas.data[i+1] = 255 - imgCanvas.data[i+1];
             imgCanvas.data[i+2] = 255 - imgCanvas.data[i+2];
         }
         ctx.putImageData(imgCanvas, 0, 0)
-    } else {
-        document.querySelectorAll('*').forEach(element => {
-            element.style.color = '';
-            element.style.border = '';
-        });
-        if(imgCanvasLight){
-            ctx.putImageData(imgCanvasLight, 0, 0);
-        }
-    }
 }
 
 window.addEventListener('load', function() {
