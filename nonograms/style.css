@@ -243,7 +243,6 @@ body.choose timer{
     width: 100%;
     display: flex;
     position: absolute;
-    align-items: center;
     justify-content: space-around;
     top: 165px;
     left: 0;

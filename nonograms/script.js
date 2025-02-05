@@ -422,13 +422,13 @@ class Play{
                 cluesColumn.push(0);
             }
             cluesY.push(cluesColumn);
+            console.log(cluesY)
             arrTextColumn.push(cluesColumn.length)
         }
-
         for(let i=0; i < cluesY.length; i++){
             for(let j = 0; j < cluesY[i].length; j++){
                 text = cluesY[i][j];
-                ctx.fillText(text, 95 +size/2 + i*size, 90 - fontSize*j);
+                ctx.fillText(text, 95 +size/2 + i*size, 90 - fontSize * (cluesY[i].length - 1 - j));
             }
         }
         for(let i=0; i < cluesY.length; i++){
