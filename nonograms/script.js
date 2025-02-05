@@ -17,7 +17,6 @@ const sizeCanvas = {
     }
 }
 
-let level = 'easy';
 let fontSize = 22; 
 let widthCanvas = 500; 
 let heightCanvas = 400;
@@ -225,8 +224,7 @@ let startSecund;
 let secundCount = 0;
 let minutCount = 0;
 let size;
-console.log(shablonEasy)
-let winMsg = {nameGame: 'PLUS', time:'', level: 'easy'};;
+let winMsg = {nameGame: 'PLUS', time:'', level: 'easy'};
 let saveShablon;
 let saveField;
 let soundList = [];
@@ -582,10 +580,10 @@ function createLevelBtn (levelName, text, shablon){
     const btnLevel = new Element('button', `btn-${levelName}`, text, navigation).createElement();
     btnLevel.addEventListener('click', function(){
         body.classList.add('choose');
-        level = levelName;
-        fontSize = sizeCanvas.fontSize[level];
-        canvas.width = sizeCanvas.widthCanvas[level];
-        canvas.height = sizeCanvas.heightCanvas[level];
+        winMsg.level = levelName;
+        fontSize = sizeCanvas.fontSize[winMsg.level];
+        canvas.width = sizeCanvas.widthCanvas[winMsg.level];
+        canvas.height = sizeCanvas.heightCanvas[winMsg.level];
         shablonChoose = shablon;
         chooseShabloneGame();
     })
@@ -616,12 +614,10 @@ function chooseShabloneGame(){
         shablon = shablonChoose[Object.keys(shablonChoose)[i]];
         nonogram.fieldGame = nonogram.createPlayField();
         init();
-        nameGame = Object.keys(shablonChoose)[i];
+        winMsg.nameGame = Object.keys(shablonChoose)[i].toUpperCase();
         secundCount = 0;
         minutCount = 0;
         console.table(shablon)
-        // console.log('fieldGame ' +nonogram.fieldGame.value);
-        winMsg = {nameGame: nameGame.toUpperCase(), time:'', level: level};
         body.classList.remove('choose');
     })
 }
@@ -634,6 +630,7 @@ function init(){
 }
 
 canvas.addEventListener('mousedown', function(event){
+    console.log(winMsg.level)
     if(
         event.offsetX >= 100 &&
         event.offsetX <= 100 + shablon[0].length * size &&
@@ -666,18 +663,14 @@ canvas.addEventListener('contextmenu', function(event){
         event.preventDefault();
     }
 });
-
 btnReset.addEventListener('click', function(){
     canvas.style.pointerEvents = 'auto';
     nonogram.fieldGame = nonogram.createPlayField();
     ctx.clearRect(0, 0, widthCanvas, heightCanvas);
     inverColorField();
     stopTimer();
-    secundCount = 0;
-    minutCount = 0;
     init();
-    timerMinuts.textContent = 'XX';
-    timerSecunds.textContent = 'XX';
+    console.log(winMsg.level)
 });
 
 btnRandomGame.addEventListener('click', function(){
@@ -685,25 +678,23 @@ btnRandomGame.addEventListener('click', function(){
     const allShablon = [Object.values(shablonEasy), Object.values(shablonMedium), Object.values(shablonHard)].flat();
     const indexRandom = Math.floor((Math.random()*allShablon.length));
     if(indexRandom<=4){
-        level = 'easy';
+        winMsg.level = 'easy';
     } else if(indexRandom > 4 && indexRandom <=9){
-        level = 'medium';
+        winMsg.level = 'medium';
     } else if(indexRandom > 9 && indexRandom <=14){
-        level = 'hard'
+        winMsg.level = 'hard'
     }
     shablon = allShablon[indexRandom];
-    fontSize = sizeCanvas.fontSize[level];
-    canvas.width = sizeCanvas.widthCanvas[level];
-    canvas.height = sizeCanvas.heightCanvas[level];
+    fontSize = sizeCanvas.fontSize[winMsg.level];
+    canvas.width = sizeCanvas.widthCanvas[winMsg.level];
+    canvas.height = sizeCanvas.heightCanvas[winMsg.level];
     inverColorField();
     nonogram.fieldGame = nonogram.createPlayField();
     init();
-    secundCount = 0;
-    minutCount = 0;
+    stopTimer();
 });
 
 btnSolution.addEventListener('click', function(){
-    
     canvas.style.pointerEvents = 'none';
     nonogram.fieldGame = nonogram.createPlayField();
     ctx.clearRect(0, 0, widthCanvas, heightCanvas);
@@ -711,35 +702,41 @@ btnSolution.addEventListener('click', function(){
     nonogram.showSolution(ctx);
     nonogram.fieldGame = nonogram.createPlayField();
     init();
+    stopTimer();
 });
 
 
 saveGame.addEventListener('click', function(){
-    let saveGameStoradge = JSON.parse(localStorage.getItem('Save_Game')) || [];
+    // let saveGameStoradge = localStorage.getItem('Save_Game') || {};
     let saveGame = {
         saveField: JSON.parse(JSON.stringify(nonogram.fieldGame)),
         saveShablon: JSON.parse(JSON.stringify(shablon)),
-        time: stopTimer()
+        time: stopTimer(),
+        level: winMsg.level,
+        nameGame: winMsg.nameGame
     }
-    saveGameStoradge = [];
-    saveGameStoradge.push(saveGame);
-    localStorage.setItem('Save_Game', JSON.stringify(saveGameStoradge));
+    console.log(saveGame)
+    // saveGameStoradge = {};
+    // saveGameStoradge = (saveGame);
+    localStorage.setItem('Save_Game', JSON.stringify(saveGame));
     continueGame.disabled = false;
 })
 
 continueGame.addEventListener('click', function(){
     canvas.style.pointerEvents = 'auto';
-    let saveGameStoradge = JSON.parse(localStorage.getItem('Save_Game')) || [];
-    shablon = saveGameStoradge[0].saveShablon;
-    
+    let saveGameStoradge = JSON.parse(localStorage.getItem('Save_Game'));
+    shablon = saveGameStoradge.saveShablon;
+    console.log(saveGameStoradge)
     ctx.clearRect(0, 0, widthCanvas, heightCanvas);
     inverColorField();
     nonogram.fieldGame = nonogram.createPlayField();
-    
+    winMsg.level = saveGameStoradge.level;
+    winMsg.nameGame = saveGameStoradge.nameGame.toUpperCase();
+
 
     for(let i=0; i <nonogram.fieldGame.length; i++){
         for(let j = 0; j < nonogram.fieldGame[0].length; j++){
-            nonogram.fieldGame[i][j] = { ...saveGameStoradge[0].saveField[i][j] };
+            nonogram.fieldGame[i][j] = { ...saveGameStoradge.saveField[i][j] };
             if(document.body.classList.contains('dark')){
                 nonogram.fieldGame[i][j].value === 1 ? ctx.fillStyle = 'white' : ctx.fillStyle = 'black';
             }else{
@@ -753,8 +750,8 @@ continueGame.addEventListener('click', function(){
             }
         }
     }
-    minutCount = saveGameStoradge[0].time.minut;
-    secundCount = saveGameStoradge[0].time.secund;
+    minutCount = saveGameStoradge.time.minut;
+    secundCount = saveGameStoradge.time.secund;
     timerStart();
     init();
 })
@@ -798,7 +795,8 @@ function modalActive(result){
         const modalCloseItem = new Element('i', 'fa-solid fa-xmark', '', modalClose).createElement();
         addWinGameStoradge();
         audioOnOff(audioModal);
-
+        stopTimer();
+        canvas.style.pointerEvents = 'none';
         modalClose.addEventListener('click', function(){
         modalWindow.remove();
         });
@@ -841,6 +839,10 @@ function stopTimer(){
         clearInterval(startSecund);
         timerStatus = false;
     }
+    timerMinuts.textContent = 'XX';
+    timerSecunds.textContent = 'XX';
+    secundCount = 0;
+    minutCount = 0;
     return time;
 }
 function chahgeTimer(time, timeBox){
@@ -852,6 +854,7 @@ function addWinGameStoradge(){
         gameStoradge.shift();
     }
     gameStoradge.push(winMsg);
+    console.log(winMsg)
     winMsg = {};
     localStorage.setItem('Win_Game', JSON.stringify(gameStoradge));
     showWinGame();
@@ -859,6 +862,7 @@ function addWinGameStoradge(){
 
 function showWinGame(){
     const gameWin = JSON.parse(localStorage.getItem('Win_Game')) || [];
+    
     gameWin.sort((a,b) => a.time - b.time);
     winTable.innerHTML = '';
     gameWin.forEach(win => {
@@ -925,8 +929,8 @@ window.addEventListener('load', function() {
     activateButton();
 });
 function activateButton() {
-    let saveGameStorage = JSON.parse(localStorage.getItem('Save_Game')) || [];
-    if (Array.isArray(saveGameStorage) && saveGameStorage.length > 0) {
+    let saveGameStorage = localStorage.getItem('Save_Game');
+    if (saveGameStorage && saveGameStorage.length > 0) {
         continueGame.disabled = false;
     } else {
         continueGame.disabled = true;
