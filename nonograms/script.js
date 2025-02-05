@@ -51,7 +51,7 @@ let shablonEasy = {
         [0, 0, 0, 1, 1],
         [0, 0, 0, 0, 1]
     ],
-    Y: [
+    y: [
         [1, 0, 0, 0, 1],
         [0, 1, 0, 1, 0],
         [0, 0, 1, 0, 0],
@@ -482,31 +482,39 @@ class Play{
                 ctx.fillStyle = this.fieldGame[columnIndex][rowIndex].value ? 'black' : 'white';
             }
             if(this.fieldGame[columnIndex][rowIndex].mark){
-                // ctx.fillStyle = 'white';
-                // this.fieldGame[columnIndex][rowIndex].mark = false;
-                // this.fieldGame[columnIndex][rowIndex].value = 0;
-                this.fieldGame[columnIndex][rowIndex].style.pointerEvents = 'none';
+                
+                this.fieldGame[columnIndex][rowIndex].mark = false;
             }
             this.drawCell(rowIndex, columnIndex, ctx);
             this.updateBoard(ctx);
+            // console.log(this.fieldGame[columnIndex][rowIndex])
         }
         return this.fieldGame;
     }
     markCell(rowIndex, columnIndex, ctx){
         if(rowIndex >=0 && rowIndex < row && columnIndex >=0 && columnIndex < column){
-            if(this.fieldGame[columnIndex][rowIndex].mark){
+            if(!this.fieldGame[columnIndex][rowIndex].mark){
+                this.fieldGame[columnIndex][rowIndex].value = 0;
+
                 if(document.body.classList.contains('dark')){
                     ctx.fillStyle = 'black';
-                }else{
+                } else{
                     ctx.fillStyle = 'white';
                 }
-                ctx.fillRect((100 + rowIndex*size+1), (100 + columnIndex*size+1), size-2, size-2);
-                this.fieldGame[columnIndex][rowIndex].mark = false;
-            }else if(this.fieldGame[columnIndex][rowIndex].value === 0 && this.fieldGame[columnIndex][rowIndex].mark == false){
+                this.drawCell(rowIndex, columnIndex, ctx);
                 this.drawMark(rowIndex, columnIndex, ctx);
                 this.fieldGame[columnIndex][rowIndex].mark = true;
-                this.updateBoard(ctx);
+            }else if(this.fieldGame[columnIndex][rowIndex].mark){
+                
+                if(document.body.classList.contains('dark')){
+                    ctx.fillStyle = this.fieldGame[columnIndex][rowIndex].value == 0 ? 'black' : 'white';
+                } else{
+                    ctx.fillStyle = this.fieldGame[columnIndex][rowIndex].value == 0 ? 'white' : 'black';
+                }
+                this.drawCell(rowIndex, columnIndex, ctx);
+                this.fieldGame[columnIndex][rowIndex].mark = false;
             }
+            // console.log(this.fieldGame[columnIndex][rowIndex])
             this.updateBoard(ctx);
         }
         return this.fieldGame;
