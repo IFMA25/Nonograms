@@ -671,9 +671,12 @@ btnReset.addEventListener('click', function(){
     nonogram.fieldGame = nonogram.createPlayField();
     ctx.clearRect(0, 0, widthCanvas, heightCanvas);
     inverColorField();
+    stopTimer();
     secundCount = 0;
     minutCount = 0;
     init();
+    timerMinuts.textContent = 'XX';
+    timerSecunds.textContent = 'XX';
 });
 
 btnRandomGame.addEventListener('click', function(){
